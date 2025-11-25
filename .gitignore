@@ -1,1 +1,11 @@
 env/
+__pycache__/
+*.pyc
+.DS_Store
+.vscode/
+.idea/
+node_modules/
+dist/
+build/
+*.log
+*.key

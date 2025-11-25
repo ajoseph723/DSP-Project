@@ -1,0 +1,109 @@
+import sys
+import os
+
+current_dir = os.path.dirname(
+    os.path.abspath(__file__)
+)  # Get the absolute path of the current file's directory
+project_path = os.path.abspath(
+    os.path.join(current_dir, "..")
+)  # Set file path
+os.chdir(project_path)  # Change the working directory to GammaRepo
+sys.path.append(project_path)
+
+import mysql.connector
+from security_utils import SecurityManager
+
+def test_db_cycle():
+    print("--- Starting Database Integration Test ---")
+
+    # 1. Connect
+    try:
+        db = mysql.connector.connect(
+            host="localhost",
+            user="root",  # Update as needed
+            password="password",  # Update as needed
+            database="SecureHealthDB",
+        )
+        cursor = db.cursor()
+        print("[PASS] Database Connected.")
+    except Exception as e:
+        print(f"[FAIL] Could not connect to DB: {e}")
+        return
+
+    sec = SecurityManager("test_secret.key")
+
+    # 2. Prepare Data
+    # We pretend this is user input
+    pt_gender = "Female"
+    pt_age = "29"
+
+    # Encrypt Data
+    enc_gender = sec.encrypt_data(pt_gender)
+    enc_age = sec.encrypt_data(pt_age)
+
+    # Create Integrity Signature (Hash of raw sensitive data)
+    # In a real app, you might hash the whole row. Here we hash the sensitive parts.
+    raw_blob = pt_gender + pt_age
+    row_sig = sec.generate_integrity_signature(raw_blob)
+
+    # 3. Insert into DB (The "Cloud")
+    try:
+        sql = """INSERT INTO Patients 
+                 (first_name, last_name, gender_enc, age_enc, weight, height, history, row_signature) 
+                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
+        val = ("Test", "User", enc_gender, enc_age, 70.5, 170.0, "No history", row_sig)
+
+        cursor.execute(sql, val)
+        db.commit()
+        test_id = cursor.lastrowid
+        print(f"[PASS] Inserted Test Row ID: {test_id}")
+    except Exception as e:
+        print(f"[FAIL] Insert Failed: {e}")
+        return
+
+    # 4. Retrieve and Verify
+    try:
+        cursor.execute(
+            "SELECT gender_enc, age_enc, row_signature FROM Patients WHERE id = %s",
+            (test_id,),
+        )
+        result = cursor.fetchone()
+
+        if not result:
+            print("[FAIL] Row not found.")
+            return
+
+        db_gender_enc, db_age_enc, db_sig = result
+
+        # Decrypt
+        dec_gender = sec.decrypt_data(db_gender_enc)
+        dec_age = sec.decrypt_data(db_age_enc)
+
+        print(f"   Fetched Encrypted Gender: {db_gender_enc[:15]}...")  # Show snippet
+        print(f"   Decrypted Gender: {dec_gender}")
+
+        # Verify Integrity [cite: 49]
+        # Re-calculate hash based on what we just decrypted
+        recalc_sig = sec.generate_integrity_signature(dec_gender + dec_age)
+
+        if dec_gender == pt_gender and dec_age == pt_age:
+            print("[PASS] Decryption matches original data.")
+        else:
+            print("[FAIL] Decryption mismatch.")
+
+        if db_sig == recalc_sig:
+            print("[PASS] Integrity Signature Valid.")
+        else:
+            print("[FAIL] Integrity Check Failed (Data corrupted).")
+
+        # Cleanup (Optional: Delete the test row)
+        cursor.execute("DELETE FROM Patients WHERE id = %s", (test_id,))
+        db.commit()
+        print("[PASS] Cleanup complete.")
+
+    except Exception as e:
+        print(f"[FAIL] Retrieval/Verification Error: {e}")
+
+
+if __name__ == "__main__":
+    test_db_cycle()
