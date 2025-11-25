@@ -8,7 +8,6 @@ import json
 class SecurityManager:
     def __init__(self, key_file="secret.key"):
         # Load or generate a symmetric key for AES encryption
-        # In a real app, this key stays with the Client, NEVER the Cloud.
         try:
             with open(key_file, "rb") as f:
                 self.key = f.read()
@@ -22,12 +21,11 @@ class SecurityManager:
     # Authentication
     def hash_password(self, plain_password):
         """Hashes password using bcrypt (includes salt)."""
-        # [cite: 41, 42]
+
         return bcrypt.hashpw(plain_password.encode("utf-8"), bcrypt.gensalt())
 
     def verify_password(self, plain_password, hashed_password):
         """Verifies a stored hash against an input password."""
-        # FIX: Convert the hash from DB (string) back to bytes
         if isinstance(hashed_password, str):
             hashed_password = hashed_password.encode("utf-8")
 

@@ -19,10 +19,11 @@ def test_db_cycle():
     # 1. Connect
     try:
         db = mysql.connector.connect(
-            host="localhost",
-            user="root",  # Update as needed
-            password="password",  # Update as needed
-            database="SecureHealthDB",
+            host="dsp-mysqldatabase.chogg206kt6s.us-east-2.rds.amazonaws.com",
+            user="admin",
+            password="Kent2025",
+            database="DSP_Database",
+            port=3306,
         )
         cursor = db.cursor()
         print("[PASS] Database Connected.")
@@ -32,8 +33,7 @@ def test_db_cycle():
 
     sec = SecurityManager("test_secret.key")
 
-    # 2. Prepare Data
-    # We pretend this is user input
+    # Pretend this is user input
     pt_gender = "Female"
     pt_age = "29"
 
@@ -41,12 +41,12 @@ def test_db_cycle():
     enc_gender = sec.encrypt_data(pt_gender)
     enc_age = sec.encrypt_data(pt_age)
 
-    # Create Integrity Signature (Hash of raw sensitive data)
-    # In a real app, you might hash the whole row. Here we hash the sensitive parts.
+    # Create Integrity Signature
+    
     raw_blob = pt_gender + pt_age
     row_sig = sec.generate_integrity_signature(raw_blob)
 
-    # 3. Insert into DB (The "Cloud")
+    # Insert into DB
     try:
         sql = """INSERT INTO Patients 
                  (first_name, last_name, gender_enc, age_enc, weight, height, history, row_signature) 
@@ -61,7 +61,7 @@ def test_db_cycle():
         print(f"[FAIL] Insert Failed: {e}")
         return
 
-    # 4. Retrieve and Verify
+    # Retrieve and Verify
     try:
         cursor.execute(
             "SELECT gender_enc, age_enc, row_signature FROM Patients WHERE id = %s",
@@ -82,8 +82,8 @@ def test_db_cycle():
         print(f"   Fetched Encrypted Gender: {db_gender_enc[:15]}...")  # Show snippet
         print(f"   Decrypted Gender: {dec_gender}")
 
-        # Verify Integrity [cite: 49]
-        # Re-calculate hash based on what we just decrypted
+        # Verify Integrity
+        # Re-calculate hash based on what was just decrypted
         recalc_sig = sec.generate_integrity_signature(dec_gender + dec_age)
 
         if dec_gender == pt_gender and dec_age == pt_age:
@@ -96,7 +96,7 @@ def test_db_cycle():
         else:
             print("[FAIL] Integrity Check Failed (Data corrupted).")
 
-        # Cleanup (Optional: Delete the test row)
+        # Delete the test row
         cursor.execute("DELETE FROM Patients WHERE id = %s", (test_id,))
         db.commit()
         print("[PASS] Cleanup complete.")
