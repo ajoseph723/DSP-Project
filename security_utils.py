@@ -1,3 +1,17 @@
+# !/usr/bin/env python3
+#
+# security_utils.py
+# Security Utilities Module
+#
+# Description: Implements password hashing, data encryption, and integrity signatures.
+#
+# Uses bcrypt for password hashing and cryptography for AES encryption.
+# Uses HMAC with SHA-256 for integrity protection.
+# Uses Fernet (symmetric encryption) from the cryptography library.
+#
+# 11/24/2025
+#
+
 import bcrypt
 from cryptography.fernet import Fernet
 import hmac

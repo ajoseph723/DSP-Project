@@ -1,3 +1,14 @@
+# !/usr/bin/env python3
+#
+# db_setup.py
+#
+# Description: Initializes the MySQL database and tables for the DSP project.
+# Creates Users and Patients tables with appropriate fields.
+# Seeds initial dummy data for testing.
+#
+# 11/24/2025
+#
+
 import mysql.connector
 from security_utils import SecurityManager
 
@@ -17,7 +28,7 @@ def init_db():
     cursor.execute("CREATE DATABASE IF NOT EXISTS DSP_Database")
     cursor.execute("USE DSP_Database")
 
-    # 1. Create Users Table (Authentication)
+    # Create Users Table
     # Stores username, hashed password, and Role (H or R)
     cursor.execute(
         """
@@ -30,7 +41,7 @@ def init_db():
     """
     )
 
-    # 2. Create Patients Table (The Data)
+    # Create Patients Table
     # Gender and Age are encrypted (stored as TEXT/BLOB)
     # Row_Signature is for integrity checking
     cursor.execute(

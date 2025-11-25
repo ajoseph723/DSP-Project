@@ -1,17 +1,22 @@
+# !/usr/bin/env python3
 #
+# main.py
+# Digital Security Project - Main Application
 #
+# Description: Implements secure login, data retrieval with integrity checks,
+# and data addition with encryption and integrity signatures.
 #
-#
+# 11/24/2025
 #
 
 import mysql.connector
 from security_utils import SecurityManager
 import sys
 
-# CONFIGURATION
+# Database Configuration
 DB_CONFIG = {
     "host": "dsp-mysqldatabase.chogg206kt6s.us-east-2.rds.amazonaws.com",
-    "user": "admin",  # Update if you use a different user
+    "user": "admin",
     "password": "Kent2025",
     "database": "DSP_Database",
 }
@@ -59,7 +64,7 @@ def view_patients(cursor, sec_manager, user_role):
     """
     print(f"\n--- PATIENT RECORDS (Role: {user_role}) ---")
 
-    # 1. Fetch data from Cloud
+    # Fetch data from DB
     query = """SELECT id, first_name, last_name, gender_enc, age_enc, 
                weight, height, history, row_signature FROM Patients"""
     cursor.execute(query)
@@ -93,7 +98,7 @@ def view_patients(cursor, sec_manager, user_role):
         if stored_sig != calculated_sig:
             integrity_status = "FAIL (TAMPERED)"
 
-        # 3. DECRYPTION
+        # Decryption
         # Decrypt Gender and Age locally
         try:
             gender_plain = sec_manager.decrypt_data(gender_enc)
@@ -102,8 +107,8 @@ def view_patients(cursor, sec_manager, user_role):
             gender_plain = "ERR"
             age_plain = "ERR"
 
-        # 4. ACCESS CONTROL
-        # If user is Group R (Researcher), hide names
+        # Access Control
+        # If user is a Researcher then hide names
         display_name = f"{fname} {lname}"
         if user_role == "R":
             display_name = "REDACTED"
@@ -128,17 +133,17 @@ def add_patient(cursor, db, sec_manager):
     height = float(input("Height: "))
     history = input("History: ")
 
-    # 1. ENCRYPTION
+    # Encryption
     # Encrypt sensitive fields before they leave the client
     gender_enc = sec_manager.encrypt_data(gender).decode("utf-8")
     age_enc = sec_manager.encrypt_data(age).decode("utf-8")
 
-    # 2. INTEGRITY SIGNATURE
+    # Integrity check
     # Create HMAC of the row data
     raw_data_string = f"{fname}{lname}{gender_enc}{age_enc}{weight}{height}{history}"
     row_sig = sec_manager.generate_integrity_signature(raw_data_string)
 
-    # 3. UPLOAD TO CLOUD
+    # Upload to DB
     query = """INSERT INTO Patients 
                (first_name, last_name, gender_enc, age_enc, weight, height, history, row_signature)
                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
@@ -158,13 +163,13 @@ def main():
     db = get_db_connection()
     cursor = db.cursor()
 
-    # Login Phase
+    # Login
     current_user, current_role = login(cursor, sec_manager)
 
     if not current_user:
         return  # Exit if login fails
 
-    # Main Menu Phase
+    # Main menu loop
     while True:
         print(f"\nLogged in as: {current_user} (Group {current_role})")
         print("1. View Patients")

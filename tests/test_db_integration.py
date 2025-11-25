@@ -1,3 +1,14 @@
+# !/usr/bin/env python3
+#
+# test_db_integration.py
+#
+# run: python3 tests/test_db_integration.py
+#
+# Description: Integration test for DB operations with encryption and integrity
+#
+# 11/25/2025
+#
+
 import sys
 import os
 
@@ -7,7 +18,7 @@ current_dir = os.path.dirname(
 project_path = os.path.abspath(
     os.path.join(current_dir, "..")
 )  # Set file path
-os.chdir(project_path)  # Change the working directory to GammaRepo
+os.chdir(project_path)  # Change working directory to project root
 sys.path.append(project_path)
 
 import mysql.connector
@@ -16,7 +27,7 @@ from security_utils import SecurityManager
 def test_db_cycle():
     print("--- Starting Database Integration Test ---")
 
-    # 1. Connect
+    # Connect
     try:
         db = mysql.connector.connect(
             host="dsp-mysqldatabase.chogg206kt6s.us-east-2.rds.amazonaws.com",
@@ -79,7 +90,7 @@ def test_db_cycle():
         dec_gender = sec.decrypt_data(db_gender_enc)
         dec_age = sec.decrypt_data(db_age_enc)
 
-        print(f"   Fetched Encrypted Gender: {db_gender_enc[:15]}...")  # Show snippet
+        print(f"   Fetched Encrypted Gender: {db_gender_enc[:15]}...")
         print(f"   Decrypted Gender: {dec_gender}")
 
         # Verify Integrity

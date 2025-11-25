@@ -1,5 +1,14 @@
-import mysql.connector
+# !/usr/bin/env python3
+#
+# view_cloud_data.py
+#
+# Description: Connects to the cloud database and retrieves
+# and displays user and patient data (encrypted fields shown as ciphertext).
+# 
+# 11/25/2025
+#
 
+import mysql.connector
 
 def view_data():
     try:

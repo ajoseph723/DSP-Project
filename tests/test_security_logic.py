@@ -1,7 +1,8 @@
-#
+# !/usr/bin/env python3
+# test_security_logic.py
 # run: python3 tests/test_security_logic.py
 # Description: Unit tests for security logic (hashing, encryption, integrity)
-# 11/06/2024
+# 11/25/2025
 #
 
 import sys
@@ -11,7 +12,7 @@ current_dir = os.path.dirname(
     os.path.abspath(__file__)
 )  # Get the absolute path of the current file's directory
 project_path = os.path.abspath(os.path.join(current_dir, ".."))  # Set file path
-os.chdir(project_path)  # Change the working directory to GammaRepo
+os.chdir(project_path)  # Change the working directory to the project root
 sys.path.append(project_path)
 
 import unittest
@@ -27,13 +28,13 @@ class TestSecurityManager(unittest.TestCase):
         password = "my_secure_password"
         hashed = self.sec.hash_password(password)
 
-        # 1. Ensure hash is NOT the plain password
+        # Ensure hash is NOT the plain password
         self.assertNotEqual(password, hashed)
 
-        # 2. Ensure verification works
+        # Ensure verification works
         self.assertTrue(self.sec.verify_password(password, hashed))
 
-        # 3. Ensure wrong password fails
+        # Ensure wrong password fails
         self.assertFalse(self.sec.verify_password("wrong_password", hashed))
 
     def test_probabilistic_encryption(self):
@@ -43,11 +44,10 @@ class TestSecurityManager(unittest.TestCase):
         enc1 = self.sec.encrypt_data(sensitive_data)
         enc2 = self.sec.encrypt_data(sensitive_data)
 
-        # 1. Ciphertexts must look different (Probabilistic Encryption)
-        # This satisfies the requirement to hide statistical info [cite: 54]
+        # Ciphertexts must look different, requirement to hide statistical info
         self.assertNotEqual(enc1, enc2)
 
-        # 2. Both must decrypt to the same original value
+        # Both must decrypt to the same original value
         self.assertEqual(self.sec.decrypt_data(enc1), sensitive_data)
         self.assertEqual(self.sec.decrypt_data(enc2), sensitive_data)
 
@@ -56,11 +56,11 @@ class TestSecurityManager(unittest.TestCase):
         data = "JohnDoeData"
         sig1 = self.sec.generate_integrity_signature(data)
 
-        # 1. Same data = Same signature
+        # Same data equals to same signature
         sig2 = self.sec.generate_integrity_signature(data)
         self.assertEqual(sig1, sig2)
 
-        # 2. Modified data = Different signature [cite: 49]
+        # Modified data should have a different signature
         sig3 = self.sec.generate_integrity_signature("JohnDoeData_Hack")
         self.assertNotEqual(sig1, sig3)
 
