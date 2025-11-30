@@ -22,9 +22,6 @@ Data Integrity: Each row includes an HMAC (Hash-Based Message Authentication Cod
 
 Architecture
 
-Shutterstock
-
-Explore
 
 The system consists of two main components:
 
@@ -42,8 +39,8 @@ Installation & Setup
 
 1. Clone the Repository
 
-git clone [<repository-url>](https://github.com/ajoseph723/DSP-Project.git)
-cd <repository-folder>
+git clone https://github.com/ajoseph723/DSP-Project.git
+cd DSP-Project
 
 2.Install Dependencies
 
@@ -78,7 +75,7 @@ Bash
 
 python populate_db.py
 
-🖥️ Usage
+Usage
 
 Run the main application interface:
 Bash
