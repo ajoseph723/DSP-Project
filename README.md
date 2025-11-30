@@ -1,12 +1,12 @@
 # Secure Database-as-a-Service (DBaaS) Project
 
-📋 Project Overview
+Project Overview
 
 This project implements a Secure Database-as-a-Service system designed for a "semi-trusted" cloud environment. In this model, the cloud provider (database) is assumed to be honest-but-curious: it follows protocols but attempts to learn information from stored data.
 
 To mitigate this, the system employs a Client-Side Encryption Middleware architecture. All data encryption, decryption, and integrity hashing occur locally on the client application before data is sent to the cloud.
 
-🛡️ Key Security Features
+Key Security Features
 
     User Authentication: Passwords are salted and hashed using bcrypt before storage. Plain-text passwords never touch the database .
 
