@@ -3,7 +3,7 @@ from security_utils import SecurityManager
 from faker import Faker
 import random
 
-# CONFIGURATION (Must match your AWS setup)
+# Database Configuration
 DB_CONFIG = {
     "host": "dsp-mysqldatabase.chogg206kt6s.us-east-2.rds.amazonaws.com",
     "user": "admin",
@@ -15,7 +15,7 @@ DB_CONFIG = {
 def populate():
     print("--- STARTING BULK DATA GENERATION ---")
 
-    # 1. Setup
+    # Setup
     fake = Faker()
     sec_manager = SecurityManager("secret.key")
 
@@ -26,7 +26,7 @@ def populate():
         print(f"Connection Failed: {e}")
         return
 
-    # 2. Generate 100 records
+    # Generate 100 records
     print("Generating and encrypting 100 records...")
 
     records_to_insert = []
@@ -41,13 +41,13 @@ def populate():
         height = round(random.uniform(150.0, 200.0), 1)
         history = fake.sentence(nb_words=6)
 
-        # ENCRYPTION (Confidentiality) [cite: 52]
-        # We must encrypt Gender and Age using the SecurityManager
+        # Encryption
+        # Encrypt Gender and Age using the SecurityManager
         gender_enc = sec_manager.encrypt_data(gender).decode("utf-8")
         age_enc = sec_manager.encrypt_data(age).decode("utf-8")
 
-        # INTEGRITY (HMAC) [cite: 49]
-        # We must generate the signature exactly how main.py expects it
+        # Integrity Signature
+        # Generate the signature exactly how main.py expects it
         raw_data_string = (
             f"{fname}{lname}{gender_enc}{age_enc}{weight}{height}{history}"
         )
@@ -57,7 +57,7 @@ def populate():
             (fname, lname, gender_enc, age_enc, weight, height, history, row_sig)
         )
 
-    # 3. Bulk Insert
+    # Bulk Insert
     query = """INSERT INTO Patients 
                (first_name, last_name, gender_enc, age_enc, weight, height, history, row_signature) 
                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
