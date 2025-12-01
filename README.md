@@ -22,7 +22,6 @@ Data Integrity: Each row includes an HMAC (Hash-Based Message Authentication Cod
 
 Architecture
 
-
 The system consists of two main components:
 
     Client App (Python): Handles login, encryption/decryption logic, and access control enforcement.
@@ -39,7 +38,7 @@ Installation & Setup
 
 1. Clone the Repository
 
-git clone https://github.com/ajoseph723/DSP-Project.git
+git clone <https://github.com/ajoseph723/DSP-Project.git>
 cd DSP-Project
 
 2.Install Dependencies
