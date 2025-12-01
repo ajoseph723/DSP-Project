@@ -35,7 +35,7 @@ def populate():
         # Generate Fake Data
         fname = fake.first_name()
         lname = fake.last_name()
-        gender = random.choice(["Male", "Female", "Non-binary"])
+        gender = random.choice(["Male", "Female"])
         age = str(random.randint(18, 90))
         weight = round(random.uniform(110.0, 250.0), 1)
         height = round(random.uniform(150.0, 200.0), 1)
