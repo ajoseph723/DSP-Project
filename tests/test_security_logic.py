@@ -1,7 +1,11 @@
 # !/usr/bin/env python3
+#
 # test_security_logic.py
+#
 # run: python3 tests/test_security_logic.py
+#
 # Description: Unit tests for security logic (hashing, encryption, integrity)
+#
 # 11/25/2025
 #
 

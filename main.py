@@ -1,7 +1,6 @@
 # !/usr/bin/env python3
 #
 # main.py
-# Digital Security Project - Main Application
 #
 # Description: Implements secure login, data retrieval with integrity checks,
 # and data addition with encryption and integrity signatures.
@@ -32,7 +31,7 @@ def get_db_connection():
 
 def login(cursor, sec_manager):
     """
-    Handles User Authentication[cite: 39].
+    Handles User Authentication.
     Verifies hash against the database.
     """
     print("\n--- SECURE LOGIN ---")
@@ -60,7 +59,7 @@ def login(cursor, sec_manager):
 def view_patients(cursor, sec_manager, user_role):
     """
     Handles Data Retrieval, Integrity Checking, and Access Control.
-    [cite: 44, 48, 52]
+    
     """
     print(f"\n--- PATIENT RECORDS (Role: {user_role}) ---")
 
@@ -84,10 +83,10 @@ def view_patients(cursor, sec_manager, user_role):
             row
         )
 
-        # 2. INTEGRITY CHECK
-        # Reconstruct the string used for hashing (Must match add_patient logic!)
+        # Integrity Check
+        # Reconstruct the string used for hashing
         # We ensure all fields are strings to match the signature generation
-        # Note: In a real app, handle None/Nulls carefully.
+
         raw_data_string = (
             f"{fname}{lname}{gender_enc}{age_enc}{weight}{height}{history}"
         )
@@ -122,7 +121,7 @@ def view_patients(cursor, sec_manager, user_role):
 def add_patient(cursor, db, sec_manager):
     """
     Allows Group H to add new encrypted records.
-    [cite: 47]
+
     """
     print("\n--- ADD NEW PATIENT ---")
     fname = input("First Name: ")
@@ -186,7 +185,7 @@ def main():
             if current_role == "H":
                 add_patient(cursor, db, sec_manager)
             else:
-                print("Access Denied: Only Group H can add patients[cite: 47].")
+                print("Access Denied: Only Group H can add patients.")
 
         elif choice == "3":
             print("Exiting...")

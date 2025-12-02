@@ -50,7 +50,7 @@ class SecurityManager:
         """
         Encrypts data (e.g., Gender, Age).
         Fernet uses AES-128 in CBC mode with a random IV every time.
-        This prevents statistical leakage (e.g., 'Male' will look different every time).
+        This prevents statistical leakage.
 
         """
         if isinstance(data, (int, float)):
