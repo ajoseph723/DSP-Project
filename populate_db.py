@@ -1,3 +1,13 @@
+# !/usr/bin/env python3
+#
+# populate_db.py
+#
+# Description: Generates and inserts 100 fake patient records
+# into the database with encryption and integrity signatures.
+#
+# 11/24/2025
+#
+
 import mysql.connector
 from security_utils import SecurityManager
 from faker import Faker

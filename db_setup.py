@@ -87,13 +87,5 @@ def init_db():
     db.commit()
     print("Users seeded.")
 
-    # Test DB Connection #
-    # cur = db.cursor() #cursor is used to run queries and fetch results from DB
-    # cur.execute("SELECT NOW();") #returns current date and time from DB server
-    # print(cur.fetchone()) #fetches one row from data in cursor (fetched time result is one tuple of data anyway)
-    # cur.close()
-    # db.close() #close DB connection
-    # End Test DB Connection #
-
 if __name__ == "__main__":
     init_db()
