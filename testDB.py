@@ -5,7 +5,7 @@
 #
 # Description: Simple test script to connect to the DSP_Database
 # and fetch the current date and time from the MySQL server.
-#11/24/2025
+# 11/24/2025
 #
 
 import os
@@ -21,6 +21,6 @@ conn = mysql.connector.connect(
 )
 cur = conn.cursor() # cursor is used to run queries and fetch results from DB
 cur.execute("SELECT NOW();") # returns current date and time from DB server
-print(cur.fetchone()) #f etches one row from data in cursor (fetched time result is one tuple of data anyway)
+print(cur.fetchone()) #fetches one row from data in cursor (fetched time result is one tuple of data anyway)
 cur.close()
 conn.close() # close DB connection
